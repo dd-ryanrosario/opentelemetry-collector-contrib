@@ -22,7 +22,8 @@ func NewFactory() receiver.Factory {
 		metadata.Type,
 		createDefaultConfig,
 		receiver.WithMetrics(createMetricsReceiver, metadata.MetricsStability),
-		receiver.WithTraces(createTracesReceiver, metadata.TracesStability))
+		receiver.WithTraces(createTracesReceiver, metadata.TracesStability),
+		receiver.WithLogs(createLogsReceiver, metadata.LogsStability))
 }
 
 func createDefaultConfig() component.Config {
@@ -32,7 +33,24 @@ func createDefaultConfig() component.Config {
 		},
 		ReadTimeout:      60 * time.Second,
 		TraceIDCacheSize: 100,
+		//MIGHT NEED TO ADD LOG CONFIG HERE, FIGURE OUT WHAT IS NEEDED
 	}
+}
+
+//CHECK THIS IMPLEMENTATION
+func createLogsReceiver(_ context.Context, params receiver.Settings, cfg component.Config, consumer consumer.Logs) (receiver.Logs, error) {
+	var err error
+	rcfg := cfg.(*Config)
+	r := receivers.GetOrAdd(rcfg, func() (dd component.Component) {
+		dd, err = newDataDogReceiver(rcfg, params)
+		return dd
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r.Unwrap().(*datadogReceiver).nextLogsConsumer = consumer
+	return r, nil
 }
 
 func createTracesReceiver(_ context.Context, params receiver.Settings, cfg component.Config, consumer consumer.Traces) (receiver.Traces, error) {
