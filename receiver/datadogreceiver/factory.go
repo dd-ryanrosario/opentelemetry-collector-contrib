@@ -37,7 +37,7 @@ func createDefaultConfig() component.Config {
 	}
 }
 
-//CHECK THIS IMPLEMENTATION
+// CHECK THIS IMPLEMENTATION
 func createLogsReceiver(_ context.Context, params receiver.Settings, cfg component.Config, consumer consumer.Logs) (receiver.Logs, error) {
 	var err error
 	rcfg := cfg.(*Config)
@@ -71,7 +71,7 @@ func createTracesReceiver(_ context.Context, params receiver.Settings, cfg compo
 func createMetricsReceiver(_ context.Context, params receiver.Settings, cfg component.Config, consumer consumer.Metrics) (receiver.Metrics, error) {
 	var err error
 	rcfg := cfg.(*Config)
-	r := receivers.GetOrAdd(cfg, func() (dd component.Component) {
+	r := receivers.GetOrAdd(rcfg, func() (dd component.Component) {
 		dd, err = newDataDogReceiver(rcfg, params)
 		return dd
 	})
