@@ -238,6 +238,7 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/ackextension v0.127.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/exp/metrics v0.127.0 // indirect
+	github.com/open-telemetry/opentelemetry-collector-contrib/internal/gopsutilenv v0.0.0-00010101000000-000000000000 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/pdatautil v0.127.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/sharedcomponent v0.127.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/splunk v0.127.0 // indirect
@@ -334,9 +335,9 @@ require (
 	go.opentelemetry.io/collector/service v0.127.0 // indirect
 	go.opentelemetry.io/collector/service/hostcapabilities v0.127.0 // indirect
 	go.opentelemetry.io/contrib/bridges/otelzap v0.10.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.59.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
 	go.opentelemetry.io/contrib/otelconf v0.15.0 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.35.0 // indirect
 	go.opentelemetry.io/contrib/zpages v0.60.0 // indirect
@@ -373,7 +374,7 @@ require (
 	gonum.org/v1/gonum v0.16.0 // indirect
 	google.golang.org/api v0.226.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250519155744-55703ea1f237 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
@@ -492,3 +493,5 @@ replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/stefr
 replace github.com/open-telemetry/opentelemetry-collector-contrib/exporter/stefexporter => ../exporter/stefexporter
 
 replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor => ../processor/deltatocumulativeprocessor
+
+replace github.com/open-telemetry/opentelemetry-collector-contrib/internal/gopsutilenv => ../internal/gopsutilenv
