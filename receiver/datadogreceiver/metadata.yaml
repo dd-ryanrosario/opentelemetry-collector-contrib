@@ -4,6 +4,7 @@ status:
   class: receiver
   stability:
     alpha: [traces, metrics]
+    development: [logs]
   distributions: [contrib]
   codeowners:
     active: [boostchicken, gouthamve, MovieStoreGuy]

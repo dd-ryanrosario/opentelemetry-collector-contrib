@@ -36,9 +36,12 @@ type datadogReceiver struct {
 
 	nextTracesConsumer  consumer.Traces
 	nextMetricsConsumer consumer.Metrics
+	nextLogsConsumer    consumer.Logs
 
 	metricsTranslator *translator.MetricsTranslator
 	statsTranslator   *translator.StatsTranslator
+	//IMPLEMENT TRANSLATOR
+	logsTranslator *translator.LogsTranslator
 
 	server    *http.Server
 	tReceiver *receiverhelper.ObsReport
@@ -128,6 +131,21 @@ func (ddr *datadogReceiver) getEndpoints() []Endpoint {
 		}...)
 	}
 
+	//FIND OUT WHAT PATTERNS TO SUPPORT FOR LOGS
+	if ddr.nextLogsConsumer != nil {
+		endpoints = append(endpoints, []Endpoint{
+			{
+				Pattern: "/v1/input",
+				Handler: ddr.handleLogs, // implement this
+			},
+			// optionally support additional endpoints like:
+			// {
+			//     Pattern: "/api/v2/logs",
+			//     Handler: ddr.handleLogsV2,
+			// },
+		}...)
+	}
+
 	infoResponse, _ := ddr.buildInfoResponse(endpoints)
 
 	endpoints = append(endpoints, Endpoint{
@@ -163,6 +181,7 @@ func newDataDogReceiver(config *Config, params receiver.Settings) (component.Com
 		tReceiver:         instance,
 		metricsTranslator: translator.NewMetricsTranslator(params.BuildInfo),
 		statsTranslator:   translator.NewStatsTranslator(),
+		logsTranslator:    translator.NewLogsTranslator(params.BuildInfo),
 		traceIDCache:      cache,
 	}, nil
 }
@@ -496,4 +515,35 @@ func (ddr *datadogReceiver) handleStats(w http.ResponseWriter, req *http.Request
 	}
 
 	_, _ = w.Write([]byte("OK"))
+}
+
+// IMPLEMENT THIS AGAIN
+func (ddr *datadogReceiver) handleLogs(w http.ResponseWriter, r *http.Request) {
+	if ddr.nextLogsConsumer == nil {
+		http.Error(w, "logs consumer not configured", http.StatusNotImplemented)
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		ddr.params.Logger.Error("Failed to read request body", zap.Error(err))
+		http.Error(w, "failed to read body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	logs, err := ddr.logsTranslator.FromDatadogPayload(body)
+	if err != nil {
+		ddr.params.Logger.Error("Failed to translate Datadog logs", zap.Error(err))
+		http.Error(w, "failed to parse logs", http.StatusBadRequest)
+		return
+	}
+
+	if err := ddr.nextLogsConsumer.ConsumeLogs(r.Context(), logs); err != nil {
+		ddr.params.Logger.Error("Failed to consume logs", zap.Error(err))
+		http.Error(w, "failed to consume logs", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
 }
